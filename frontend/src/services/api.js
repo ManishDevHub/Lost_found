@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = process.env.VITE_REACT_APP_BACKEND_BASEURL  // or any URL
+
 
 // Helper: get token
 const getToken = () => localStorage.getItem("token");

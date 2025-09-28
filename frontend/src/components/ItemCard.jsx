@@ -4,7 +4,7 @@ export default function ItemCard({ item, onDelete, currentUser }) {
   const statusClass = item.status === "lost" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600";
   const itemId = item._id || item.id;
   
-  // 🚀 FIX: IDs को String में बदलकर तुलना करें
+
   const isOwner = currentUser && item.user && (String(item.user._id) === String(currentUser._id));
 
   // Date ko acche se format karne ke liye
