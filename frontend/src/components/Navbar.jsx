@@ -26,9 +26,9 @@ export default function Navbar({ currentUser, setCurrentUser }) {
       <Link to="/report-found" onClick={() => setIsOpen(false)} className="hover:text-indigo-600">
         Report Found
       </Link>
-      {/* <Link to="/my-items" onClick={() => setIsOpen(false)} className="hover:text-indigo-600">
+      <Link to="/my-items" onClick={() => setIsOpen(false)} className="hover:text-indigo-600">
         My Items
-      </Link> */}
+      </Link>
     </>
   );
 
