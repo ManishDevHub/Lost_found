@@ -45,19 +45,15 @@ app.use((err, _req, res, _next) => {
     .json({ message: err.message || "Server error" });
 });
 
-// ✅ HTTP + Socket.IO server
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: { origin: "*" },
 });
 
-// ✅ Jab client connect hoga
-io.on("connection", (socket) => {
-  console.log("✅ Socket connected:", socket.id);
-});
 
-// ✅ Example: item create hone pe event emit karna
-import Item from "./models/itemModel.js"; // apna model import karo
+
+import Item from "./models/itemModel.js"; 
 
 app.post("/api/items", async (req, res) => {
   try {

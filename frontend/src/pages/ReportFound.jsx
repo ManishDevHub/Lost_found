@@ -10,9 +10,9 @@ export default function ReportFound({ allItems, setAllItems, currentUser }) {
     category: "",
     image: null,
   });
+
   const [error, setError] = useState(null);
 
-  // ✅ Handle image as File (not Base64)
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -20,24 +20,27 @@ export default function ReportFound({ allItems, setAllItems, currentUser }) {
     }
   };
 
-  // ✅ Submit to backend
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
+      // ✅ EXACT SAME STRUCTURE AS ReportLost
       const newItem = {
         name: formData.itemName,
         description: formData.description,
         location: formData.location,
         date: formData.date,
         category: formData.category,
-        status: "found", // 👈 backend के लिए
+        status: "found", // 👈 ONLY DIFFERENCE
         image: formData.image,
       };
 
-      const savedItem = await addItem(newItem); // API call
-      if (savedItem._id) {
-        setAllItems([savedItem, ...allItems]); // ✅ Update UI list
+      const savedItem = await addItem(newItem);
+
+      if (savedItem?._id) {
+        setAllItems([savedItem, ...allItems]);
         alert("Found item reported successfully!");
+
         setFormData({
           itemName: "",
           description: "",
@@ -45,19 +48,23 @@ export default function ReportFound({ allItems, setAllItems, currentUser }) {
           date: new Date().toISOString().split("T")[0],
           category: "",
           image: null,
+          user: currentUser._id,
         });
       } else {
-        setError(savedItem.message || "Error adding item");
+        setError(savedItem?.message || "Error adding item");
       }
     } catch (err) {
+      console.error(err);
       setError("Something went wrong. Please try again.");
     }
   };
-
+console.log("CURRENT USER:", currentUser);
   return (
     <div className="pt-24 container mx-auto px-6">
       <div className="bg-white/90 p-8 rounded-xl shadow-lg max-w-xl mx-auto">
-        <h2 className="text-2xl font-bold text-green-600 mb-6">Report Found Item</h2>
+        <h2 className="text-2xl font-bold text-green-600 mb-6">
+          Report Found Item
+        </h2>
 
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
@@ -66,35 +73,49 @@ export default function ReportFound({ allItems, setAllItems, currentUser }) {
             className="w-full border p-2 rounded"
             placeholder="Item Name"
             value={formData.itemName}
-            onChange={(e) => setFormData({ ...formData, itemName: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, itemName: e.target.value })
+            }
             required
           />
+
           <textarea
             className="w-full border p-2 rounded"
             placeholder="Description"
             rows="3"
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
             required
           />
+
           <input
             className="w-full border p-2 rounded"
             placeholder="Location Found"
             value={formData.location}
-            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, location: e.target.value })
+            }
             required
           />
+
           <input
             type="date"
             className="w-full border p-2 rounded"
             value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, date: e.target.value })
+            }
             required
           />
+
           <select
             className="w-full border p-2 rounded"
             value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.target.value })
+            }
             required
           >
             <option value="">Select Category</option>
@@ -105,8 +126,8 @@ export default function ReportFound({ allItems, setAllItems, currentUser }) {
             <option value="other">Other</option>
           </select>
 
-          {/* Image Upload */}
           <input type="file" accept="image/*" onChange={handleImageChange} />
+
           {formData.image && (
             <img
               src={URL.createObjectURL(formData.image)}

@@ -9,34 +9,36 @@ export default function MyItems() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = await getMe(); 
+        // 🔥 FIX 1: get correct user object
+        const meRes = await getMe();
+        const user = meRes.user || meRes; // supports both formats
         setCurrentUser(user);
 
         const allItems = await getItems();
-        
-        // 🚀 FIX: IDs को String में बदलकर तुलना करें
+
+        // 🔥 FIX 2: correct owner filtering
         const myItems = allItems.filter((item) => {
-          const itemCreatorId = item.user?._id;
-          const currentUserId = user._id;
-          
-          if (!itemCreatorId || !currentUserId) return false;
-          
-          // String comparison ensures MongoDB ObjectIds match correctly
-          return String(itemCreatorId) === String(currentUserId);
+          if (!item.user || !user?._id) return false;
+
+          const itemUserId =
+            typeof item.user === "object" ? item.user._id : item.user;
+
+          return String(itemUserId) === String(user._id);
         });
-        
+
         setItems(myItems);
       } catch (err) {
         console.error("Error fetching items:", err);
       }
     };
+
     fetchData();
   }, []);
 
   const handleDelete = async (id) => {
     try {
       await deleteItem(id);
-      setItems((prev) => prev.filter((i) => i._id !== id));
+      setItems((prev) => prev.filter((item) => item._id !== id));
     } catch (err) {
       console.error("Failed to delete item:", err);
       alert("Failed to delete item");
@@ -45,7 +47,9 @@ export default function MyItems() {
 
   return (
     <div className="pt-24 container mx-auto px-6">
-      <h2 className="text-2xl font-bold text-indigo-600 mb-6">My Reported Items</h2>
+      <h2 className="text-2xl font-bold text-indigo-600 mb-6">
+        My Reported Items
+      </h2>
 
       {items.length === 0 ? (
         <p className="text-gray-600">You have not reported any items yet.</p>
